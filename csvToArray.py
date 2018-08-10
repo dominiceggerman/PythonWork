@@ -1,3 +1,4 @@
+# By Dominic Eggerman
 # Pull data from csv and return array
 
 # Pull data to simple array
@@ -7,4 +8,6 @@ def pullToArray(filename):
     return data
 
 if __name__ == "__main__":
-    x = pullToArray("../../Quantlab/input.csv")
+
+    filename = input("Enter file path: ")
+    arr = pullToArray(filename)

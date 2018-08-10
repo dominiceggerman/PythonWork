@@ -1,3 +1,4 @@
+# By Dominic Eggerman
 # Sort one array, ascending, and sort other based on first array (matching indicies)
 import numpy as np
 import matplotlib.pyplot as plt

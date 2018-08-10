@@ -1,3 +1,4 @@
+# By Dominic Eggerman
 # Login prompt
 def userLogin():
 
