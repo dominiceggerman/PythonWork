@@ -11,6 +11,10 @@ mainForm = document.getElementsByName("frmMain")[0];
 pipeMenu = document.getElementById("selFFPipeline");
 pipeMenu.value = 248;
 
+///////////////////////
+// Select date range //
+///////////////////////
+
 ////////////////////////
 // Select opavail run //
 ////////////////////////
