@@ -1,1 +1,1 @@
-A general directory for small python scripts
+# A general directory for small python scripts
