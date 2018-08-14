@@ -13,8 +13,12 @@ pipeMenu.value = 248;
 
 ///////////////////////
 // Select date range //
-///////////////////////
-
+///////////////////////\
+dates = ["08/08/2018", "08/09/2018", "08/10/2018"]
+dateEntry = document.getElementById("txtFFDateIn")
+for (var i = 0; i < date.length; i++) {
+    dateEntry.value = dates[i]
+}
 ////////////////////////
 // Select opavail run //
 ////////////////////////
@@ -40,3 +44,7 @@ input.click()
 // Fetch
 var fetcher = document.getElementById("cmdFF");
 fetcher.click();
+
+/////////////////////////////
+// Look for status message //
+/////////////////////////////
