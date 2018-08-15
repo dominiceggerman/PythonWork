@@ -37,10 +37,9 @@ dates.forEach(function(date) {
 //
 // Select date range
 //
-dates = ["08/08/2018", "08/09/2018", "08/10/2018"];
 dateEntry = document.getElementById("txtFFDateIn");
-for (var i = 0; i < date.length; i++) {
-    dateEntry.value = dates[i];
+for (var i = 0; i < dateArr.length; i++) {
+    dateEntry.value = dateArr[i];
 }
 //
 // Select opavail run
@@ -76,6 +75,7 @@ var status = statusTable.children[0].children[2].children[2].textContent;
 if (status.includes("completed")) {
     outputDetail = document.getElementsByTagName("textarea")[0].textContent;
     if (outputDetail.includes("errors=0;")) {
-        console.log(outputDetail);
+        var close = document.getElementsByClassName("close-window")[0];
+        close.click();
     }
 }
