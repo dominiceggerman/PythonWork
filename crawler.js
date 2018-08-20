@@ -1,16 +1,19 @@
 // By Dominic Eggerman
 // Crawler to fetch data for locroles
 
-// Navigate to page
-window.location = "http://gcc.genscape.com/GCCcontent/intranet/manual_normalization.php";
+//////////
+// USER //
+//////////
+// User must select the target pipeline from the dropdown on page load
+// Select dates (YYYY, MM, DD)
+startDay = new Date(2018, 08, 15);
+endDay = new Date(2018, 08, 20);
 
-// Select form
-mainForm = document.getElementsByName("frmMain")[0];
+// // // // //
 
-// Select pipeline
-pipeMenu = document.getElementById("selFFPipeline");
-pipeMenu.value = 248;
-
+// 
+// Get date range
+// 
 // Returns an array of dates between the two dates
 var getDates = function(startDate, endDate) {
     var dates = [],
@@ -26,56 +29,79 @@ var getDates = function(startDate, endDate) {
     }
     return dates;
 }
-// Usage - dates are YYYY, MM, DD
-var dates = getDates(new Date(2013,10,22), new Date(2013,11,25));
+// Generate range
+var dates = getDates(startDay, endDay);
 var dateArr = [];                                                                                                          
 dates.forEach(function(date) {
     var day = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear();
     dateArr.push(day);
 });
 
-//
-// Select date range
-//
-dateEntry = document.getElementById("txtFFDateIn");
+// Get page items we will use
+var dateBox = document.getElementById("txtFFDateIn");  // Date input box
+var table = document.getElementById("reportResultTable");  // table of results
+var numOps = table.children[1].children.length;  // Number of options in dataset
+var input;  // Input button for dataset
+var fetcher = document.getElementById("cmdFF");  // Fetch button
+
+// For date in array
 for (var i = 0; i < dateArr.length; i++) {
-    dateEntry.value = dateArr[i];
-}
-//
-// Select opavail run
-//
-// Get the data table
-var table = document.getElementById("reportResultTable");
-// Check which input has manual run = True
-var numOps = table.children[1].children.length;
-// Instantiate input
-var input;
-// Loop to get the correct input
-for (var i = 0; i <= numOps; i++) {
-    var args = table.children[1].children[i].children[2].textContent;
-    if (args.includes("manualRun=true")) {
-        // Get input button and break
-         input = table.children[1].children[i].children[0].children[0];
-         break;
+
+    // Set date
+    dateBox.value = dateArr[i];
+
+    //
+    // Select opavail run
+    //
+    // Loop to get the correct input
+    for (var i = 0; i <= numOps; i++) {
+        var args = table.children[1].children[i].children[2].textContent;
+        if (args.includes("manualRun=true")) {
+            // Get input button and break
+            input = table.children[1].children[i].children[0].children[0];
+            break;
+        }
     }
-}
 
-// Mimic click on input
-input.click();
+    // Mimic click on input
+    input.click();
 
-// Fetch
-var fetcher = document.getElementById("cmdFF");
-fetcher.click();
+    // Fetch
+    fetcher.click();
 
-//
-// Look for status message
-//
-var statusTable = document.getElementsByTagName("table")[0];
-var status = statusTable.children[0].children[2].children[2].textContent;
-if (status.includes("completed")) {
-    outputDetail = document.getElementsByTagName("textarea")[0].textContent;
-    if (outputDetail.includes("errors=0;")) {
+    //
+    // Look for status message
+    //
+    wait = true
+    var statusTable = document.getElementsByTagName("table")[0];
+    while (wait) {
+        if (typeof statusTable.children[0].children[2] == "undefined") {}
+        else {wait = false}
+    }
+
+    running = true
+    while (running) {
+        // Check status
+        var status = statusTable.children[0].children[2].children[2].textContent;
+        if (status.includes("progress") || status.includes("not yet")) {
+            console.log(status)
+            status = statusTable.children[0].children[2].children[2].textContent;
+        } else if (status.includes("completed")) {
+            outputDetail = document.getElementsByTagName("textarea")[0].textContent;
+        }
+
+        // Check output and close window
         var close = document.getElementsByClassName("close-window")[0];
-        close.click();
+        if (outputDetail.includes("errors=0;")) {
+            console.log("Completed: " + dateArr[i])
+            close.click();
+        } else {
+            console.log("Encountered error: " + dateArr[i]);
+            close.click();
+        }
+
+        // Stop running while loop
+        running = false
     }
+
 }
