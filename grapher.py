@@ -1,10 +1,4 @@
 # By Dominic Eggerman
-# Imports
-import pandas as pd
-import numpy as np
-from dateutil import parser as dprs
-import matplotlib.pyplot as plt
-import getpass
 
 # Acquire data
 def acquire(path):
@@ -39,6 +33,19 @@ def sortData(df, pointName):
 
 # Run
 if __name__ == "__main__":
+    # Imports
+    import pandas as pd
+    import numpy as np
+    from dateutil import parser as dprs
+    import matplotlib.pyplot as plt
+    import getpass
+    from optparse import OptionParser
+
+    # Parse arguements from command line
+    parser = OptionParser()
+    parser.add_option("--save", "-s", help="Use a saved set of points.")
+    (options, args) = parser.parse_args()
+
     # Get username
     user = getpass.getuser()
     # Graph title, file paths, and point names
@@ -46,8 +53,8 @@ if __name__ == "__main__":
     files = ["C:/Users/{}/Downloads/Wagoner East (2).csv".format(user), 
             "C:/Users/{}/Downloads/RAMAPO AGT (1).csv".format(user)
             ]
-    points = ["Wagoner", "Ramapo"]
-    types = ["Scheduled", "Operational"]
+    points = args[0].split(",")
+    types = args[1].split(",")
     # df is a list of dataframes - each index in df is data from a file in files
     df = [acquire(file) for file in files]
     df = [sortData(d, point) for d, point in zip(df, points)]
