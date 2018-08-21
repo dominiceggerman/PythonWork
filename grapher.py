@@ -59,7 +59,7 @@ if __name__ == "__main__":
     # Loop through dataframes and plot
     ax = plt.axes()
     for datafile in df:
-        ax.plot(dates, datafile.iloc[:,1:], label=datafile.columns.values[2])  # plot data vs dates
+        ax.plot(dates, datafile.iloc[:,1:], label=datafile.iloc[0,1:])  # plot data vs dates
         ax.legend()  # set legend
     
     # Style gridlnes and xticks
