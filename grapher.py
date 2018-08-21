@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from dateutil import parser as dprs
 import matplotlib.pyplot as plt
+import getpass
 
 # Acquire data
 def acquire(path):
@@ -18,8 +19,8 @@ def sortData(df, pointName):
     # Get scheduled and opcap - turn to absolute values
     scheduled = np.absolute(df["Scheduled (BZ)"].values)
     opcap = np.absolute(df["Operational (BZ)"].values)
-    # Reverse the array if needed - (RT data is from newest to oldest)
-    if dprs.parse(dates[0]) < dprs.parse(dates[len(dates)-1]):
+    # Reverse the array if needed (oldest to newest)
+    if dprs.parse(dates[0]) > dprs.parse(dates[len(dates)-1]):
         dates = dates[::-1]
         scheduled = scheduled[::-1]
         opcap = opcap[::-1]
@@ -38,10 +39,12 @@ def sortData(df, pointName):
 
 # Run
 if __name__ == "__main__":
+    # Get username
+    user = getpass.getuser()
     # Graph title, file paths, and point names
     title = "Wagoner East vs Ramapo AGT"
-    files = ["C:/Users/domin/Downloads/Wagoner East (2).csv", 
-            "C:/Users/domin/Downloads/RAMAPO AGT (1).csv"
+    files = ["C:/Users/{}/Downloads/Wagoner East (2).csv".format(user), 
+            "C:/Users/{}/Downloads/RAMAPO AGT (1).csv".format(user)
             ]
     points = ["Wagoner", "Ramapo"]
     # df is a list of dataframes - each index in df is data from a file in files
@@ -58,8 +61,9 @@ if __name__ == "__main__":
 
     # Loop through dataframes and plot
     ax = plt.axes()
-    for datafile in df:
-        ax.plot(dates, datafile.iloc[:,1:], label=datafile.iloc[0,1:])  # plot data vs dates
+    for (ind, datafile) in enumerate(df):
+        lineLabel = datafile.columns.values
+        ax.plot(dates, datafile.iloc[:,1:], label=lineLabel[1])  # plot data vs dates
         ax.legend()  # set legend
     
     # Style gridlnes and xticks
