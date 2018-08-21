@@ -47,6 +47,7 @@ if __name__ == "__main__":
             "C:/Users/{}/Downloads/RAMAPO AGT (1).csv".format(user)
             ]
     points = ["Wagoner", "Ramapo"]
+    types = ["Scheduled", "Operational"]
     # df is a list of dataframes - each index in df is data from a file in files
     df = [acquire(file) for file in files]
     df = [sortData(d, point) for d, point in zip(df, points)]
@@ -62,9 +63,9 @@ if __name__ == "__main__":
     # Loop through dataframes and plot
     ax = plt.axes()
     for (ind, datafile) in enumerate(df):
-        lineLabel = datafile.columns.values
-        ax.plot(dates, datafile.iloc[:,1:], label=lineLabel[1])  # plot data vs dates
-        ax.legend()  # set legend
+        ax.plot(dates, datafile.iloc[:,1:])  # plot data vs dates
+    # Set legend
+    ax.legend([point + " " + quant for point in points for quant in types])
     
     # Style gridlnes and xticks
     ax.yaxis.grid(linestyle=":")
