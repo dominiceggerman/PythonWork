@@ -1,4 +1,5 @@
 # By Dominic Eggerman
+# Imports
 import pandas as pd
 import numpy as np
 from dateutil import parser as dprs
@@ -6,54 +7,60 @@ import matplotlib.pyplot as plt
 
 # Acquire data
 def acquire(path):
-
+    # Read file into dataframe and return
     df = pd.read_csv(path)
     return df
 
-# Sort
+# Sort and filter the data
 def sortData(df):
-
-    # Get data
+    # Get dates
     dates = df["Effective Date"].values
-    scheduled = df["Scheduled (BZ)"].values
-    opcap = df["Operational (BZ)"].values
-    # Reverse if needed
+    # Get scheduled and opcap - turn to absolute values
+    scheduled = np.absolute(df["Scheduled (BZ)"].values)
+    opcap = np.absolute(df["Operational (BZ)"].values)
+    # Reverse the array if needed - (RT data is from newest to oldest)
     if dprs.parse(dates[0]) < dprs.parse(dates[len(dates)-1]):
         dates = dates[::-1]
         scheduled = scheduled[::-1]
         opcap = opcap[::-1]
 
-    # Transform data
+    # Transform data to MMcf
     scheduled = scheduled / 1030
     opcap = opcap / 1030
 
-    # Push to dataframe
+    # Push to new dataframe and return (cutting out other columns)
     new_df = pd.DataFrame({"Date":dates, "Scheduled":scheduled, "Operational":opcap})
     return new_df
 
 
 # Run
 if __name__ == "__main__":
-    title = "Wagoner East"
-    path = "C:/Users/domin/Downloads/Wagoner East (2).csv"
-    data = acquire(path)
-    df = sortData(data)
+    # Graph title and file paths
+    title = "Wagoner East vs Ramapo AGT"
+    files = ["C:/Users/domin/Downloads/Wagoner East (2).csv", 
+            "C:/Users/domin/Downloads/RAMAPO AGT (1).csv"
+            ]
+    # df is a list of dataframes - each index in df is data from a file in files
+    df = [acquire(file) for file in files]
+    df = [sortData(d) for d in df]
 
-    # Sorted data
-    dates = df["Date"].values
-
-    # Set up labels
+    # Set graph labels
     plt.title(title, fontsize=20)
     plt.ylabel("MMcf/d")
     plt.xticks(rotation=90)
 
-    # Plot
+    # Pull longest range of dates
+    dates = df[0]["Date"].values
+
+    # Loop through dataframes and plot
     ax = plt.axes()
-    ax.plot(dates, df.iloc[:,1:])  # plot all data vs dates
+    for datafile in df:
+        ax.plot(dates, datafile.iloc[:,1:])  # plot all data vs dates
     
+    # Style gridlnes and xticks
     ax.yaxis.grid(linestyle=":")
     for label in ax.xaxis.get_ticklabels()[1::2]:
         label.set_visible(False)
 
-    # Show
+    # Show plot
     plt.show()
