@@ -9,16 +9,15 @@ def acquire(path):
 
     df = pd.read_csv(path)
     return df
-    
-def graphLastMonth(df):
 
-    # Sort
-    # df.sort_values(by="Effective Date")
+# Sort
+def sortData(df):
 
     # Get data
     dates = df["Effective Date"].values
     scheduled = df["Scheduled (BZ)"].values
     opcap = df["Operational (BZ)"].values
+    # Reverse if needed
     if dprs.parse(dates[0]) < dprs.parse(dates[len(dates)-1]):
         dates = dates[::-1]
         scheduled = scheduled[::-1]
@@ -28,24 +27,33 @@ def graphLastMonth(df):
     scheduled = scheduled / 1030
     opcap = opcap / 1030
 
-    # Set up labels
-    plt.ylabel("MMcf/d")
-    plt.xticks(rotation=60)
-
-    # Plot
-    ax1 = plt.axes()
-    # ax2 = plt.axes()
-    ax1.plot(dates, scheduled)
-    # ax2.plot(opcap)
-    for label in ax1.xaxis.get_ticklabels()[::1]:
-        label.set_visible(False)
-
-    # Show
-    plt.show()
+    # Push to dataframe
+    new_df = pd.DataFrame({"Date":dates, "Scheduled":scheduled, "Operational":opcap})
+    return new_df
 
 
 # Run
 if __name__ == "__main__":
-    path = "C:/Users/deggerman/Downloads/Wagoner East (2).csv"
+    title = "Wagoner East"
+    path = "C:/Users/domin/Downloads/Wagoner East (2).csv"
     data = acquire(path)
-    graphLastMonth(data)
+    df = sortData(data)
+
+    # Sorted data
+    dates = df["Date"].values
+
+    # Set up labels
+    plt.title(title, fontsize=20)
+    plt.ylabel("MMcf/d")
+    plt.xticks(rotation=90)
+
+    # Plot
+    ax = plt.axes()
+    ax.plot(dates, df.iloc[:,1:])  # plot all data vs dates
+    
+    ax.yaxis.grid(linestyle=":")
+    for label in ax.xaxis.get_ticklabels()[1::2]:
+        label.set_visible(False)
+
+    # Show
+    plt.show()
