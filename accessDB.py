@@ -10,7 +10,7 @@ def connect(usr, pswrd):
 # Find location id's from names
 def getLocationIDs(conn, point):
     # Create statement to select 
-    statement = """SELECT DISTINCT loc.name
+    statement = """SELECT DISTINCT loc.name, loc.id
                     FROM maintenance.location AS loc
                     WHERE loc.name ILIKE {0}
                     ORDER BY loc.name;
@@ -19,17 +19,19 @@ def getLocationIDs(conn, point):
     print("Querying database...")
     df = pd.read_sql(statement, conn)
     points = df["name"].values
+    loc_ids = df["id"].values
 
     # Decisions
     if len(points) == 0:
         print("No points found matching that name.")
+        return -1
     elif len(points) == 1:
-        return points
+        return loc_ids
     else:
         point_select = ["{0}: {1}".format(ind+1,p) for ind, p in enumerate(points)]
         print(point_select)
         choice = int(input("Select a point from the list by entering the corresponding number: "))
-        return points[choice-1]
+        return loc_ids[choice-1]
 
 # Query scheduled and operational caps for date range
 def query(conn, start_date, point):
