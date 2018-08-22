@@ -16,7 +16,7 @@ def getLocationIDs(conn, point):
                     ORDER BY loc.name;
     """.format("'%"+point+"%'")
     # Read to dataframe
-    print("Querying database...")
+    print("Querying database for points matching name ILIKE '%{0}%'...".format(point))
     df = pd.read_sql(statement, conn)
     points = df["name"].values
     loc_ids = df["id"].values
@@ -34,20 +34,19 @@ def getLocationIDs(conn, point):
         return loc_ids[choice-1]
 
 # Query scheduled and operational caps for date range
-def query(conn, start_date, point):
+def getCapacityData(conn, start_date, location_id):
     # Statement to select scheduled and operational caps for date range
     statement = """SELECT loc.name, eod.gas_day, eod.scheduled_cap, eod.operational_cap  
                     FROM analysts.location_role_eod_history_v AS eod
                     INNER JOIN maintenance.location_role AS lr ON eod.location_role_id = lr.id
                     INNER JOIN maintenance.location AS loc ON lr.location_id = loc.id
                     WHERE eod.gas_day >= {0}
-                    AND loc.name ILIKE {1}
+                    AND loc.id ILIKE {1}
                     ORDER BY eod.gas_day;
-    """.format(start_date, "'%"+point+"%'")
-    print(statement)
+    """.format(start_date, location_id)
 
-    # Read to pandas dataframe
-    print("Querying database...")
+    # Read to dataframe
+    print("Querying database for opcap data...")
     df = pd.read_sql(statement, conn)
     return df
 
@@ -73,7 +72,6 @@ if __name__ == "__main__":
 
     # Connect, query, and print df
     connection = connect(username, password)
-    point = getLocationIDs(connection, point_name)
-    print(point)
-    # df = query(connection, date, point_name)
-    # print(df)
+    loc_id = getLocationIDs(connection, point_name)
+    df = getCapacityData(connection, date, loc_id)
+    print(df)
