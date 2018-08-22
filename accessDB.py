@@ -3,25 +3,45 @@
 # Connect to database
 def connect(usr, pswrd):
     # Establish connection with username and password
-    connection = psycopg2.connect(dbname="insightprod",
-                                    user=usr,
-                                    password=pswrd,
-                                    host="insightproddb")
+    conn = psycopg2.connect(dbname="insightprod", user=usr, password=pswrd, host="insightproddb")
     print("Successfully connected to database...")
-    return connection
+    return conn
 
-# Query database
-def query(conn, start_date, pipe_id, point):
-    
-    # Create SQL statement
+# Find location id's from names
+def getLocationIDs(conn, point):
+    # Create statement to select 
+    statement = """SELECT DISTINCT loc.name
+                    FROM maintenance.location AS loc
+                    WHERE loc.name ILIKE {0}
+                    ORDER BY loc.name;
+    """.format("'%"+point+"%'")
+    # Read to dataframe
+    print("Querying database...")
+    df = pd.read_sql(statement, conn)
+    points = df["name"].values
+
+    # Decisions
+    if len(points) == 0:
+        print("No points found matching that name.")
+    elif len(points) == 1:
+        return points
+    else:
+        point_select = ["{0}: {1}".format(ind+1,p) for ind, p in enumerate(points)]
+        print(point_select)
+        choice = int(input("Select a point from the list by entering the corresponding number: "))
+        return points[choice-1]
+
+# Query scheduled and operational caps for date range
+def query(conn, start_date, point):
+    # Statement to select scheduled and operational caps for date range
     statement = """SELECT loc.name, eod.gas_day, eod.scheduled_cap, eod.operational_cap  
                     FROM analysts.location_role_eod_history_v AS eod
                     INNER JOIN maintenance.location_role AS lr ON eod.location_role_id = lr.id
                     INNER JOIN maintenance.location AS loc ON lr.location_id = loc.id
                     WHERE eod.gas_day >= {0}
-                    AND loc.name ILIKE {2}
-                    ORDER BY eod.gas_day
-    """.format(start_date, pipe_id, point)
+                    AND loc.name ILIKE {1}
+                    ORDER BY eod.gas_day;
+    """.format(start_date, "'%"+point+"%'")
     print(statement)
 
     # Read to pandas dataframe
@@ -43,8 +63,15 @@ if __name__ == "__main__":
     # date = input("Enter start date: ")
     # pipeline_id = input("Enter pipeline id: ")
     # point_name = input("Enter point name: ")
+    username = "deggerman"
+    password = "GS8j8gvh"
+    date = "'08/01/2018'"
+    pipeline_id = 274
+    point_name = "Wagoner East"
 
     # Connect, query, and print df
     connection = connect(username, password)
-    df = query(connection, date, pipeline_id, point_name)
-    print(df)
+    point = getLocationIDs(connection, point_name)
+    print(point)
+    # df = query(connection, date, point_name)
+    # print(df)
