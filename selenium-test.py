@@ -19,6 +19,8 @@ if __name__ == '__main__':
     date_elem = driver.find_element_by_css_selector("#txtFFDateIn")
     driver.execute_script("arguments[0].setAttribute('value','09/25/2018')", date_elem)
     # Find the job with the desired dataset, click it
-    # job_table = driver.find_element_by_css_selector("#reportResultTable")
+    job_table = driver.find_element_by_css_selector("#reportResultTable")
+    jobs = job_table.find_element_by_css_selector("*")  # Get child elements
+    print(jobs)
     # # Close the driver
     # driver.close()
