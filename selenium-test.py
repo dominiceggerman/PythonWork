@@ -29,17 +29,23 @@ if __name__ == '__main__':
         jobs = job_table.find_element_by_tag_name("tbody").find_elements_by_tag_name("tr")  # Get table rows
 
         # Find opavail arg
-        manual_run_job = []
         for j in jobs:
             arg = j.find_elements_by_tag_name("td")[2]
             if arg.text == "manualRun=true":
-                manual_run_job.append(j)
+                # Select the job as an option
+                option = j.find_elements_by_tag_name("td")[0].find_element_by_tag_name("input")
+                # Click it
+                option.click()
                 break
 
-        print(manual_run_job)
-
-        # Close the driver
-        driver.close()
+        # Click fetch
+        fetcher = driver.find_element_by_id("cmdFF")
+        fetcher.click()
+        time.sleep(30)
+        
+        # Loop until status is seen
+        # Code for undefined table ??
+        print(driver.find_elements_by_tag_name("table")[0].find_elements_by_tag_name("tr")[2].find_elements_by_tag_name("td")[2].text)
     
     except:
         # Close the driver
