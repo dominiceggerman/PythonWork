@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
                 # Else break
                 else:
-                    print("No datasets matching {} found...")
+                    print("No datasets matching {} found...".format(dataset))
                     break
 
             # Click fetch
