@@ -75,32 +75,37 @@ if __name__ == '__main__':
                         break
 
                 # no_notice
-                if dataset == "no_notice"
+                elif dataset == "no_notice":
                     if dset.text == dataset and arg.text == "":
                         option = j.find_elements_by_tag_name("td")[0].find_element_by_tag_name("input")
                         option.click()
                         break
 
                 # gas_quality
-                if dataset == "gas_quality"
+                elif dataset == "gas_quality":
                     if dset.text == dataset and arg.text == "":
                         option = j.find_elements_by_tag_name("td")[0].find_element_by_tag_name("input")
                         option.click()
                         break
 
                 # segment_capacity
-                if dataset == "segment_capacity"
+                elif dataset == "segment_capacity":
                     if dset.text == dataset and arg.text == "":
                         option = j.find_elements_by_tag_name("td")[0].find_element_by_tag_name("input")
                         option.click()
                         break
                 
                 # index_of_customers
-                if dataset == "index_of_customers"
+                elif dataset == "index_of_customers":
                     if dset.text == dataset and arg.text == "":
                         option = j.find_elements_by_tag_name("td")[0].find_element_by_tag_name("input")
                         option.click()
                         break
+
+                # Else break
+                else:
+                    print("No datasets matching {} found...")
+                    break
 
             # Click fetch
             fetcher = driver.find_element_by_id("cmdFF")
