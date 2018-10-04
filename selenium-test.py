@@ -18,21 +18,48 @@ def dateRangeGenerator():
     num_days = end_date - start_date
     return [(start_date + datetime.timedelta(days=d)).strftime("%m/%d/%Y") for d in range(0, num_days.days+1)]
 
+
+# Check for jobs table  ?? some things in here are interacting strangely ??
+def jobSelectCheck(pipe_id):
+    # Try to select job table
+    try:
+        driver.find_element_by_css_selector("#reportResultTable")
+        return True
+    except:
+        source_elem = driver.find_element_by_css_selector("#selFFPipeline")
+        if int(pipe_id) != 122:  # ?? maybe change this logic
+            source_elem.send_keys("250")
+            time.sleep(0.1)
+            source_elem.send_keys(Keys.RETURN)
+        else:
+            source_elem.send_keys("122")
+            time.sleep(0.1)
+            source_elem.send_keys(Keys.RETURN)
+        return False
+
 # Check for fetcher table
 def tableChecker():
     # Try to switch driver to iframe and read status message
     try:
         driver.switch_to.frame(driver.find_elements_by_tag_name("iframe")[1])
-        status = driver.find_element_by_class_name("statusMessageSuccess").text
+        driver.find_element_by_class_name("statusMessageSuccess").text
         return True
     except:
         return False
-
 
 # Run
 if __name__ == '__main__':
     # List of strings for status of run
     log = []
+
+    # Select pipeline
+    pipe_id = input("Enter pipeline ID: ")
+    # Check if int
+    try:
+        int(pipe_id)
+    except ValueError:
+        raise ValueError("The pipeline id you entered is not an integer.")
+
     # Select dataset
     dataset = input("Select dataset (opavail / gas_quality / no_notice etc.): ")
     if dataset not in ["opavail", "no_notice", "gas_quality", "segment_capacity", "index_of_customers"]:
@@ -50,14 +77,16 @@ if __name__ == '__main__':
         time.sleep(2)
         assert "Manual Operations" in driver.title
 
-        # Select pipeline
-        pipe_id = input("Input pipeline ID: ")
-        # Wait, find the source box, select source
-        time.sleep(1)
-        source_elem = driver.find_element_by_css_selector("#selFFPipeline")
-        source_elem.send_keys("{0}".format(pipe_id))
-        time.sleep(0.1)
-        source_elem.send_keys(Keys.RETURN)
+        # Select the job table for the source
+        check_job_table = False
+        while check_job_table is False:
+            # Wait, find the source box, select source
+            time.sleep(1)
+            source_elem = driver.find_element_by_css_selector("#selFFPipeline")
+            source_elem.send_keys("{0}".format(pipe_id))
+            time.sleep(0.1)
+            source_elem.send_keys(Keys.RETURN)
+            check_job_table = jobSelectCheck(pipe_id)
 
         # Loop over the dates that were entered
         for date in dates:
@@ -126,18 +155,28 @@ if __name__ == '__main__':
             while check_result is False:
                 time.sleep(5)
                 check_result = tableChecker()
+                print("Waiting for fetcher to initialize...")  # Select dataset error
 
-            # Check for completed status message
+            # Wait to check for completed status message
             while driver.find_element_by_class_name("statusMessageSuccess").text in ("Not started yet", "Fetcher in Progress", "Normalizer in Progress", "Completed Normalizer", "Loader in Progress"):
                 time.sleep(3)
+                print("Waiting for fetcher / normalizer / loader to finish...")
 
-            # Status
+            # Get status and append to log
             status_message = driver.find_element_by_class_name("statusMessageSuccess").text
-            print(status_message)
             log.append(status_message)
 
-            time.sleep(2)
-            driver.close()
+            # Change iframe and close window
+            close_button = driver.find_element_by_id("myModal").find_element_by_tag_name("a")[0]
+            close_button.click()
+            time.sleep(1)
+            driver.switch_to.frame(driver.find_elements_by_tag_name("iframe")[0])
+        
+        # If errors in log print them ??
+
+        # Print log and close driver
+        print(log)
+        driver.close()
     
     except KeyboardInterrupt:
         # Close the driver
