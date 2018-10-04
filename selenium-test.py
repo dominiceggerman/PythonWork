@@ -18,6 +18,17 @@ def dateRangeGenerator():
     num_days = end_date - start_date
     return [(start_date + datetime.timedelta(days=d)).strftime("%m/%d/%Y") for d in range(0, num_days.days+1)]
 
+# Check for fetcher table
+def tableChecker():
+    # Try to switch driver to iframe and read status message
+    try:
+        driver.switch_to.frame(driver.find_elements_by_tag_name("iframe")[1])
+        status = driver.find_element_by_class_name("statusMessageSuccess").text
+        return True
+    except:
+        return False
+
+
 # Run
 if __name__ == '__main__':
     # List of strings for status of run
@@ -109,16 +120,16 @@ if __name__ == '__main__':
             # Click fetch
             fetcher = driver.find_element_by_id("cmdFF")
             fetcher.click()
-            time.sleep(10)
             
             # Loop until status is seen
-            # Code for undefined table ??
+            check_result = False
+            while check_result is False:
+                time.sleep(5)
+                check_result = tableChecker()
 
-            # Switch driver to iFrame
-            driver.switch_to.frame(driver.find_elements_by_tag_name("iframe")[1])
             # Check for completed status message
             while driver.find_element_by_class_name("statusMessageSuccess").text in ("Not started yet", "Fetcher in Progress", "Normalizer in Progress", "Completed Normalizer", "Loader in Progress"):
-                time.sleep(2)
+                time.sleep(3)
 
             # Status
             status_message = driver.find_element_by_class_name("statusMessageSuccess").text
