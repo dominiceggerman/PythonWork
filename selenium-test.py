@@ -24,7 +24,7 @@ if __name__ == '__main__':
     log = []
     # Select dataset
     dataset = input("Select dataset (opavail / gas_quality / no_notice etc.): ")
-    if ("opavail", "no_notice", "gas_quality", "segment_capacity", "index_of_customers") not in dataset:
+    if dataset not in ["opavail", "no_notice", "gas_quality", "segment_capacity", "index_of_customers"]:
         raise Exception("Select a dataset to force fetch (opavail, no_notice, gas_quality, segment_capacity, index_of_customers)")
 
     # Get the date range
@@ -49,7 +49,6 @@ if __name__ == '__main__':
         source_elem.send_keys(Keys.RETURN)
 
         # Loop over the dates that were entered
-        dates = dateRangeGenerator()
         for date in dates:
             # Wait, find the date box, change date
             time.sleep(1)
