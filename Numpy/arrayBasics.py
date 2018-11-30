@@ -1,4 +1,4 @@
-# Overview of Numpy basics
+# Incomplete overview of Numpy basics
 import numpy as np
 
 if __name__ == "__main__":

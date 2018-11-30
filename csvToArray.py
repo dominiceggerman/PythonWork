@@ -1,5 +1,5 @@
 # By Dominic Eggerman
-# Pull data from csv and return array
+# Pull data from csv and return array (without pandas)
 
 # Pull data to simple array
 def pullToArray(filename):
