@@ -33,6 +33,11 @@ if __name__ == "__main__":
     print("-- Sorting --")
     print(df.sort_values("col2"))
 
+    # Cross-selecting information - df[col == value]["col_to_view"]
+    print("-- Cross-selection of information --")
+    print("col2 value where col1 = 1")
+    print(df[df["col1"] == 1]["col2"])
+
 
     print("\n-- Dataframe 2 --\n")
     df2 = pd.DataFrame({'A':['foo','foo','foo','bar','bar','bar'],
