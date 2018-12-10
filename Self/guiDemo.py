@@ -1,13 +1,12 @@
 # By Dominic Eggerman
+# Imports
+import tkinter as tk
 
 def btnClicked():
     res = "Welcome to " + txt.get()
     lbl.configure(text=res)
 
 if __name__ == "__main__":
-
-    # Imports
-    import tkinter as tk
 
     # Build window
     window = tk.Tk()

@@ -2,3 +2,16 @@
 *Dominic Eggerman*
 
 This repository is designed to house smaller python scripts that can be exported into larger projects. It also has some notes on Python libraries.
+
+## Packages
+
+### Included with Anaconda
+- numpy
+- matplotlib
+- pandas
+- tkinter
+
+### Additional Packages
+- seaborn
+- plotly
+- cufflinks
