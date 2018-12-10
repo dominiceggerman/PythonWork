@@ -1,3 +1,4 @@
 # Ignored files
 .vscode
 __pycache__
+Plotly and Cufflinks/.ipynb_checkpoints
