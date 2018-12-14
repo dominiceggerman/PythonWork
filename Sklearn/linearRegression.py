@@ -24,6 +24,7 @@ if __name__ == "__main__":
     # Get coeffs of columns
     cdf = pd.DataFrame(lm.coef_, x.columns, columns=["Coeff"])
     print(cdf)
+    print("With all other variables fixed, a unit increase of an item in the index is associated with an X unit (coeff) increase/decrease in the y variable (Price in $)")
 
     # Get predictions and display graphically
     pred = lm.predict(x_test)
@@ -32,6 +33,8 @@ if __name__ == "__main__":
     plt.show()
 
     # Metrics
-    metrics.mean_absolute_error(y_test, pred)
-    metrics.mean_squared_error(y_test, pred)
-    np.sqrt(metrics.mean_squared_error(y_test, pred))
+    print("\nMetrics:")
+    print("Mean abs error:", metrics.mean_absolute_error(y_test, pred))
+    print("Mean squared error", metrics.mean_squared_error(y_test, pred))
+    print("RMS error", np.sqrt(metrics.mean_squared_error(y_test, pred)))
+    print("R squared:", metrics.explained_variance_score(y_test, pred))
