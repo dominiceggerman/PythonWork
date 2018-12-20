@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.cross_validation import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
 
 def imputeAge(cols):
     age = cols[0]
@@ -44,3 +47,18 @@ if __name__ == "__main__":
     ax[2].set_title("Heatmap showing filled values")
     plt.tight_layout()
     plt.show()
+
+    # Prepare frame for training
+    # Convert categorical data to quantitative
+    sex = pd.get_dummies(train["Sex"], drop_first=True)
+    embark = pd.get_dummies(train["Embarked"], drop_first=True)
+    train = pd.concat([train, sex, embark], axis=1)
+    train.drop(["Sex", "Embarked", "Name", "Ticket"], axis=1, inplace=True)
+    # Create model
+    x = train.drop("Survived", axis=1)
+    y = train["Survived"]
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=101)
+    logmodel = LogisticRegression()
+    logmodel.fit(x_train, y_train)
+    predictions = logmodel.predict(x_test)
+    print(classification_report(y_test, predictions))
