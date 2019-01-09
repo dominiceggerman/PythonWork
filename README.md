@@ -16,3 +16,4 @@ This repository is designed to house smaller python scripts that can be exported
 - `plotly`
 - `cufflinks`
 - `sklearn`
+- `nltk`
