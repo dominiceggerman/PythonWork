@@ -47,11 +47,11 @@ if __name__ == "__main__":
     all_pred = spam_detect_model.predict(messages_tfidf)
     msg_train, msg_test, label_train, label_test = train_test_split(messages["message"], messages["label"], test_size=0)
     # Use pipeline to perform above
-    pipe = pipeline([[
+    pipe = pipeline([
         ("bow", CountVectorizer(analyzer=textProcess)),
         ("tfidf", TfidfTransformer()),
         ("classifier", MultinomialNB())
-    ]])
+    ])
     pipe.fit(msg_train, label_train)
     pred = pipe.predict(msg_test)
     print(classification_report(label_test, pred))
